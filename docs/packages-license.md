@@ -12347,28 +12347,6 @@ Public Domain manually approved
 
 
 
-<a name="lefthook"></a>
-### lefthook v1.13.6
-#### 
-
-##### Paths
-* /home/runner/work/liam/liam
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
-<a name="lefthook-linux-x64"></a>
-### lefthook-linux-x64 v1.13.6
-#### 
-
-##### Paths
-* /home/runner/work/liam/liam
-
-<a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
-
-
 <a name="levn"></a>
 ### levn v0.4.1
 #### 
@@ -19113,5 +19091,4 @@ BlueOak-1.0.0 permitted
 * /home/runner/work/liam/liam
 
 <a href="http://opensource.org/licenses/mit-license">MIT</a> permitted
-
 

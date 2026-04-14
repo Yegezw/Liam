@@ -21,7 +21,7 @@
 ## Coding Style & Naming
 - Language: TypeScript/TSX; React components in PascalCase (e.g., `App.tsx`); utilities in camelCase (e.g., `mergeSchema.ts`).
 - CSS Modules: `*.module.css` with typed CSS via `typed-css-modules`.
-- Lint/Format: Biome and ESLint. Run `pnpm fmt` and `pnpm lint`. Pre-commit hooks run `pnpm lint` (see `lefthook.yml`).
+- Lint/Format: Biome and ESLint. Run `pnpm fmt` and `pnpm lint`.
 
 ## Testing Guidelines
 - Unit tests: Vitest. Place near source as `*.test.ts(x)` or in `__tests__/`.
