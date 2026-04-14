@@ -2,4 +2,4 @@
 "@liam-hq/erd-core": patch
 ---
 
-Show column comments in ER table tooltips and scale them with ER zoom.
+Show table and column comments in ER tooltips and scale them with ER zoom.

@@ -1,7 +1,20 @@
-import { Table2 } from '@liam-hq/ui'
-import { Handle, Position } from '@xyflow/react'
+import {
+  Table2,
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+} from '@liam-hq/ui'
+import { Handle, Position, useStore } from '@xyflow/react'
 import clsx from 'clsx'
-import { type FC, type MouseEvent, useMemo } from 'react'
+import {
+  type CSSProperties,
+  type FC,
+  type MouseEvent,
+  useMemo,
+  useState,
+} from 'react'
 import { match } from 'ts-pattern'
 import {
   useSchemaOrThrow,
@@ -9,7 +22,6 @@ import {
 } from '../../../../../../../stores'
 import { DiffIcon } from '../../../../../../diff/components/DiffIcon'
 import diffStyles from '../../../../../../diff/styles/Diff.module.css'
-import { useCustomReactflow } from '../../../../../../reactflow/hooks'
 import type { TableNodeData } from '../../../../../types'
 import { getChangeStatus } from './getChangeStatus'
 import styles from './TableHeader.module.css'
@@ -18,8 +30,27 @@ type Props = {
   data: TableNodeData
 }
 
+const TABLE_HEADER_TOOLTIP_SIDE_OFFSET = 4
+const tableHeaderTooltipStyle = {
+  maxWidth: 360,
+  overflowWrap: 'anywhere',
+  whiteSpace: 'pre-wrap',
+} satisfies CSSProperties
+const tableCommentTooltipStyle = {
+  color: 'var(--tooltip-foreground)',
+} satisfies CSSProperties
+const tableCommentWithNameTooltipStyle = {
+  ...tableCommentTooltipStyle,
+  marginTop: 4,
+  paddingTop: 4,
+  borderTop: '1px solid var(--tooltip-border)',
+} satisfies CSSProperties
+
 export const TableHeader: FC<Props> = ({ data }) => {
   const name = data.table.name
+  const tableComment = data.table.comment?.trim()
+  const [isNameTooltipVisible, setIsNameTooltipVisible] = useState(false)
+  const zoomLevel = useStore((store) => store.transform[2])
   const { showMode: _showMode, showDiff } = useUserEditingOrThrow()
 
   const { operations } = useSchemaOrThrow()
@@ -46,8 +77,6 @@ export const TableHeader: FC<Props> = ({ data }) => {
       .otherwise(() => undefined)
   }, [showDiff, changeStatus])
 
-  const { updateNode } = useCustomReactflow()
-
   const handleHoverEvent = (event: MouseEvent<HTMLSpanElement>) => {
     // Get computed styles to check if text is truncated
     const element = event.currentTarget
@@ -60,13 +89,19 @@ export const TableHeader: FC<Props> = ({ data }) => {
     const containerWidth = element.getBoundingClientRect().width
     const isTruncated = textWidth > containerWidth + 0.018
 
-    updateNode(name, {
-      data: {
-        ...data,
-        isTooltipVisible: isTruncated,
-      },
-    })
+    setIsNameTooltipVisible(isTruncated)
   }
+
+  const tooltipStyle = useMemo<CSSProperties>(
+    () => ({
+      ...tableHeaderTooltipStyle,
+      transform: `scale(${zoomLevel})`,
+      transformOrigin: 'var(--radix-tooltip-content-transform-origin)',
+    }),
+    [zoomLevel],
+  )
+
+  const shouldShowTooltip = isNameTooltipVisible || !!tableComment
 
   return (
     <div
@@ -97,9 +132,36 @@ export const TableHeader: FC<Props> = ({ data }) => {
       >
         <Table2 className={styles.tableIcon} />
 
-        <span className={styles.name} onMouseEnter={handleHoverEvent}>
-          {name}
-        </span>
+        <TooltipProvider>
+          <TooltipRoot>
+            <TooltipTrigger asChild>
+              <span className={styles.name} onMouseEnter={handleHoverEvent}>
+                {name}
+              </span>
+            </TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent
+                side="top"
+                sideOffset={TABLE_HEADER_TOOLTIP_SIDE_OFFSET * zoomLevel}
+                hidden={!shouldShowTooltip}
+                style={tooltipStyle}
+              >
+                {isNameTooltipVisible && <div>{name}</div>}
+                {tableComment && (
+                  <div
+                    style={
+                      isNameTooltipVisible
+                        ? tableCommentWithNameTooltipStyle
+                        : tableCommentTooltipStyle
+                    }
+                  >
+                    {tableComment}
+                  </div>
+                )}
+              </TooltipContent>
+            </TooltipPortal>
+          </TooltipRoot>
+        </TooltipProvider>
 
         {showMode === 'TABLE_NAME' && (
           <>
