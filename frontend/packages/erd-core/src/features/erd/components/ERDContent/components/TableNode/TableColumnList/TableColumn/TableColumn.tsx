@@ -15,9 +15,9 @@ import {
   TooltipRoot,
   TooltipTrigger,
 } from '@liam-hq/ui'
-import { Handle, Position } from '@xyflow/react'
+import { Handle, Position, useStore } from '@xyflow/react'
 import clsx from 'clsx'
-import { type CSSProperties, type FC, useMemo } from 'react'
+import { type CSSProperties, type FC, type ReactElement, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import {
   useSchemaOrThrow,
@@ -49,6 +49,44 @@ const columnCommentTooltipStyle = {
   overflowWrap: 'anywhere',
   whiteSpace: 'pre-wrap',
 } satisfies CSSProperties
+const COLUMN_COMMENT_TOOLTIP_SIDE_OFFSET = 8
+
+type TableColumnCommentTooltipProps = {
+  comment: string
+  children: ReactElement
+}
+
+const TableColumnCommentTooltip: FC<TableColumnCommentTooltipProps> = ({
+  comment,
+  children,
+}) => {
+  const zoomLevel = useStore((store) => store.transform[2])
+  const tooltipStyle = useMemo<CSSProperties>(
+    () => ({
+      ...columnCommentTooltipStyle,
+      transform: `scale(${zoomLevel})`,
+      transformOrigin: 'var(--radix-tooltip-content-transform-origin)',
+    }),
+    [zoomLevel],
+  )
+
+  return (
+    <TooltipProvider>
+      <TooltipRoot>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipPortal>
+          <TooltipContent
+            side="right"
+            sideOffset={COLUMN_COMMENT_TOOLTIP_SIDE_OFFSET * zoomLevel}
+            style={tooltipStyle}
+          >
+            {comment}
+          </TooltipContent>
+        </TooltipPortal>
+      </TooltipRoot>
+    </TooltipProvider>
+  )
+}
 
 const ColumnIcon: FC<ColumnIconProps> = ({
   table,
@@ -196,19 +234,8 @@ export const TableColumn: FC<TableColumnProps> = ({
   }
 
   return (
-    <TooltipProvider>
-      <TooltipRoot>
-        <TooltipTrigger asChild>{columnItem}</TooltipTrigger>
-        <TooltipPortal>
-          <TooltipContent
-            side="right"
-            sideOffset={8}
-            style={columnCommentTooltipStyle}
-          >
-            {columnComment}
-          </TooltipContent>
-        </TooltipPortal>
-      </TooltipRoot>
-    </TooltipProvider>
+    <TableColumnCommentTooltip comment={columnComment}>
+      {columnItem}
+    </TableColumnCommentTooltip>
   )
 }

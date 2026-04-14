@@ -1,8 +1,9 @@
 import { aColumn, aTable } from '@liam-hq/schema'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { ReactFlowProvider, useStoreApi } from '@xyflow/react'
 import { NuqsTestingAdapter } from 'nuqs/adapters/testing'
-import type { FC, PropsWithChildren } from 'react'
+import { type FC, type PropsWithChildren, useEffect } from 'react'
 import { describe, expect, it } from 'vitest'
 import {
   SchemaProvider,
@@ -10,10 +11,27 @@ import {
 } from '../../../../../../../../stores'
 import { TableColumn } from './TableColumn'
 
+const TEST_ZOOM_LEVEL = 2
+
+const ReactFlowZoom: FC = () => {
+  const store = useStoreApi()
+
+  useEffect(() => {
+    store.setState({ transform: [0, 0, TEST_ZOOM_LEVEL] })
+  }, [store])
+
+  return null
+}
+
 const wrapper: FC<PropsWithChildren> = ({ children }) => (
   <NuqsTestingAdapter>
     <SchemaProvider current={{ enums: {}, extensions: {}, tables: {} }}>
-      <UserEditingProvider>{children}</UserEditingProvider>
+      <UserEditingProvider>
+        <ReactFlowProvider>
+          <ReactFlowZoom />
+          {children}
+        </ReactFlowProvider>
+      </UserEditingProvider>
     </SchemaProvider>
   </NuqsTestingAdapter>
 )
@@ -45,10 +63,13 @@ describe('column comment tooltip', () => {
 
     await user.hover(screen.getByText('email'))
 
-    expect(
-      await screen.findByRole('tooltip', {
-        name: 'Email address used for login',
-      }),
-    ).toBeInTheDocument()
+    const tooltip = await screen.findByRole('tooltip', {
+      name: 'Email address used for login',
+    })
+
+    expect(tooltip).toBeInTheDocument()
+    expect(tooltip.parentElement).toHaveStyle({
+      transform: `scale(${TEST_ZOOM_LEVEL})`,
+    })
   })
 })
