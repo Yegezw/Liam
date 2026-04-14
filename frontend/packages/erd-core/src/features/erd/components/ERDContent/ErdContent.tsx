@@ -8,8 +8,15 @@ import {
   ReactFlow,
   useEdgesState,
   useNodesState,
+  useReactFlow,
 } from '@xyflow/react'
-import { type FC, useCallback } from 'react'
+import {
+  type FC,
+  type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
+  useCallback,
+  useRef,
+} from 'react'
 import { useVersionOrThrow } from '../../../../providers'
 import { useUserEditingOrThrow } from '../../../../stores'
 import { selectTableLogEvent } from '../../../gtm/utils'
@@ -37,10 +44,31 @@ const edgeTypes = {
   relationship: RelationshipEdge,
 }
 
+const RIGHT_MOUSE_BUTTON = 2
+const NO_PAN_TARGET_SELECTOR =
+  '.react-flow__node, .react-flow__edge, .react-flow__nodesselection'
+
 type Props = {
   nodes: Node[]
   edges: Edge[]
   displayArea: DisplayArea
+}
+
+type RightButtonPanState = {
+  pointerId: number
+  startClientX: number
+  startClientY: number
+  startViewport: {
+    x: number
+    y: number
+    zoom: number
+  }
+}
+
+const isNoPanTarget = (target: EventTarget | null) => {
+  return (
+    target instanceof Element && target.closest(NO_PAN_TARGET_SELECTOR) !== null
+  )
 }
 
 export const ERDContentInner: FC<Props> = ({
@@ -65,6 +93,8 @@ export const ERDContentInner: FC<Props> = ({
   const { activeTableName } = useUserEditingOrThrow()
 
   const { selectTable, deselectTable } = useTableSelection()
+  const { getViewport, setViewport } = useReactFlow<Node, Edge>()
+  const rightButtonPanStateRef = useRef<RightButtonPanState | null>(null)
 
   useInitialAutoLayout({
     nodes,
@@ -146,6 +176,67 @@ export const ERDContentInner: FC<Props> = ({
 
   const panOnDrag = [1, 2]
 
+  const handleContextMenu = useCallback(
+    (event: ReactMouseEvent<HTMLDivElement>) => {
+      event.preventDefault()
+    },
+    [],
+  )
+
+  const handlePointerDownCapture = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      if (event.button !== RIGHT_MOUSE_BUTTON || !isNoPanTarget(event.target)) {
+        return
+      }
+
+      event.preventDefault()
+      event.stopPropagation()
+      event.currentTarget.setPointerCapture(event.pointerId)
+      rightButtonPanStateRef.current = {
+        pointerId: event.pointerId,
+        startClientX: event.clientX,
+        startClientY: event.clientY,
+        startViewport: getViewport(),
+      }
+    },
+    [getViewport],
+  )
+
+  const handlePointerMoveCapture = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      const state = rightButtonPanStateRef.current
+      if (!state || state.pointerId !== event.pointerId) {
+        return
+      }
+
+      event.preventDefault()
+      event.stopPropagation()
+      setViewport({
+        x: state.startViewport.x + event.clientX - state.startClientX,
+        y: state.startViewport.y + event.clientY - state.startClientY,
+        zoom: state.startViewport.zoom,
+      })
+    },
+    [setViewport],
+  )
+
+  const handlePointerUpCapture = useCallback(
+    (event: ReactPointerEvent<HTMLDivElement>) => {
+      const state = rightButtonPanStateRef.current
+      if (!state || state.pointerId !== event.pointerId) {
+        return
+      }
+
+      event.preventDefault()
+      event.stopPropagation()
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId)
+      }
+      rightButtonPanStateRef.current = null
+    },
+    [],
+  )
+
   return (
     <div className={styles.wrapper} data-loading={loading}>
       {loading && <Spinner className={styles.loading} />}
@@ -166,6 +257,11 @@ export const ERDContentInner: FC<Props> = ({
         onNodeMouseEnter={handleMouseEnterNode}
         onNodeMouseLeave={handleMouseLeaveNode}
         onNodeDragStop={handleDragStopNode}
+        onContextMenu={handleContextMenu}
+        onPointerDownCapture={handlePointerDownCapture}
+        onPointerMoveCapture={handlePointerMoveCapture}
+        onPointerUpCapture={handlePointerUpCapture}
+        onPointerCancelCapture={handlePointerUpCapture}
         panOnScroll
         panOnDrag={panOnDrag}
         deleteKeyCode={null} // Turn off because it does not want to be deleted
