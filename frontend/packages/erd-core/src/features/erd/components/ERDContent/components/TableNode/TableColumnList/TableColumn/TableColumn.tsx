@@ -4,10 +4,20 @@ import {
   isPrimaryKey,
   type Table,
 } from '@liam-hq/schema'
-import { DiamondFillIcon, DiamondIcon, KeyRound, Link } from '@liam-hq/ui'
+import {
+  DiamondFillIcon,
+  DiamondIcon,
+  KeyRound,
+  Link,
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+} from '@liam-hq/ui'
 import { Handle, Position } from '@xyflow/react'
 import clsx from 'clsx'
-import { type FC, useMemo } from 'react'
+import { type CSSProperties, type FC, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import {
   useSchemaOrThrow,
@@ -33,6 +43,12 @@ type ColumnIconProps = {
   isSource: boolean
   targetCardinality?: CardinalityType | undefined
 }
+
+const columnCommentTooltipStyle = {
+  maxWidth: 320,
+  overflowWrap: 'anywhere',
+  whiteSpace: 'pre-wrap',
+} satisfies CSSProperties
 
 const ColumnIcon: FC<ColumnIconProps> = ({
   table,
@@ -122,7 +138,9 @@ export const TableColumn: FC<TableColumnProps> = ({
   const shouldHighlight =
     isHighlightedTable && (isSource || !!targetCardinality)
 
-  return (
+  const columnComment = column.comment?.trim()
+
+  const columnItem = (
     <li
       className={clsx(
         styles.wrapper,
@@ -171,5 +189,26 @@ export const TableColumn: FC<TableColumnProps> = ({
         )}
       </div>
     </li>
+  )
+
+  if (!columnComment) {
+    return columnItem
+  }
+
+  return (
+    <TooltipProvider>
+      <TooltipRoot>
+        <TooltipTrigger asChild>{columnItem}</TooltipTrigger>
+        <TooltipPortal>
+          <TooltipContent
+            side="right"
+            sideOffset={8}
+            style={columnCommentTooltipStyle}
+          >
+            {columnComment}
+          </TooltipContent>
+        </TooltipPortal>
+      </TooltipRoot>
+    </TooltipProvider>
   )
 }
