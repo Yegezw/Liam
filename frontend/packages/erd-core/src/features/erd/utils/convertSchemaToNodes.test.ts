@@ -47,7 +47,7 @@ describe('convertSchemaToNodes', () => {
         type: 'table',
         data: {
           table: schema.tables['users'],
-          sourceColumnName: undefined,
+          sourceColumnNames: undefined,
           targetColumnCardinalities: undefined,
         },
         position: { x: 0, y: 0 },
@@ -291,6 +291,65 @@ describe('convertSchemaToNodes', () => {
 
       expect(edges[0]?.sourceHandle).toBeNull()
       expect(edges[0]?.targetHandle).toBeNull()
+    })
+
+    it('should preserve multiple source columns for the same primary table', () => {
+      const schema = aSchema({
+        tables: {
+          scenes: aTable({
+            name: 'scenes',
+            columns: {
+              id: aColumn({ name: 'id', type: 'integer' }),
+              count_index: aColumn({ name: 'count_index', type: 'integer' }),
+            },
+          }),
+          operations: aTable({
+            name: 'operations',
+            columns: {
+              id: aColumn({ name: 'id', type: 'integer' }),
+              scene_id: aColumn({ name: 'scene_id', type: 'integer' }),
+              scene_count: aColumn({ name: 'scene_count', type: 'integer' }),
+            },
+            constraints: {
+              operations_scene_id_fkey: aForeignKeyConstraint({
+                name: 'operations_scene_id_fkey',
+                columnNames: ['scene_id'],
+                targetTableName: 'scenes',
+                targetColumnNames: ['id'],
+              }),
+              operations_scene_count_fkey: aForeignKeyConstraint({
+                name: 'operations_scene_count_fkey',
+                columnNames: ['scene_count'],
+                targetTableName: 'scenes',
+                targetColumnNames: ['count_index'],
+              }),
+            },
+          }),
+        },
+      })
+
+      const { nodes, edges } = convertSchemaToNodes({
+        schema,
+        showMode: 'ALL_FIELDS',
+      })
+
+      expect(nodes.find((node) => node.id === 'scenes')?.data).toMatchObject({
+        sourceColumnNames: ['id', 'count_index'],
+      })
+      expect(edges).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: 'operations_operations_scene_id_fkey_0',
+            sourceHandle: 'scenes-id',
+            targetHandle: 'operations-scene_id',
+          }),
+          expect.objectContaining({
+            id: 'operations_operations_scene_count_fkey_0',
+            sourceHandle: 'scenes-count_index',
+            targetHandle: 'operations-scene_count',
+          }),
+        ]),
+      )
     })
   })
 

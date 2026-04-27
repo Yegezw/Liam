@@ -83,7 +83,10 @@ function App() {
 
   return (
     <VersionProvider version={version}>
-      <ErdRendererProvider schema={{ current: schema }}>
+      <ErdRendererProvider
+        schema={{ current: schema }}
+        defaultShowMode="ALL_FIELDS"
+      >
         <ERDRenderer
           withAppBar
           defaultSidebarOpen={defaultSidebarOpen}

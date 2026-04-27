@@ -21,7 +21,7 @@ export const convertSchemaToNodes = ({
   const relationships = Object.values(constraintsToRelationships(schema.tables))
 
   const tablesWithRelationships = new Set<string>()
-  const sourceColumns = new Map<string, string>()
+  const sourceColumns = new Map<string, Set<string>>()
   const tableColumnCardinalities = new Map<
     string,
     Record<string, Cardinality>
@@ -29,10 +29,10 @@ export const convertSchemaToNodes = ({
   for (const relationship of relationships) {
     tablesWithRelationships.add(relationship.primaryTableName)
     tablesWithRelationships.add(relationship.foreignTableName)
-    sourceColumns.set(
-      relationship.primaryTableName,
-      relationship.primaryColumnName,
-    )
+    const sourceColumnNames =
+      sourceColumns.get(relationship.primaryTableName) ?? new Set<string>()
+    sourceColumnNames.add(relationship.primaryColumnName)
+    sourceColumns.set(relationship.primaryTableName, sourceColumnNames)
     tableColumnCardinalities.set(relationship.foreignTableName, {
       ...tableColumnCardinalities.get(relationship.foreignTableName),
       [relationship.foreignColumnName]: relationship.cardinality,
@@ -53,7 +53,9 @@ export const convertSchemaToNodes = ({
       type: 'table',
       data: {
         table,
-        sourceColumnName: sourceColumns.get(table.name),
+        sourceColumnNames: sourceColumns.get(table.name)
+          ? Array.from(sourceColumns.get(table.name) ?? [])
+          : undefined,
         targetColumnCardinalities: tableColumnCardinalities.get(table.name),
       },
       position: { x: 0, y: 0 },

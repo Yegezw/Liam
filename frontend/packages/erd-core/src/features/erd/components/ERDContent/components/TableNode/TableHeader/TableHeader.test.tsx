@@ -44,7 +44,7 @@ const tableNodeData = (
   isActiveHighlighted: false,
   isHighlighted: false,
   isTooltipVisible: false,
-  sourceColumnName: undefined,
+  sourceColumnNames: undefined,
   targetColumnCardinalities: undefined,
   showMode: 'ALL_FIELDS',
   ...override,

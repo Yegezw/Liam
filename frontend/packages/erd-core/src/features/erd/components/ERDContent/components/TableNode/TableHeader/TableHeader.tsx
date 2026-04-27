@@ -57,7 +57,7 @@ export const TableHeader: FC<Props> = ({ data }) => {
   const showMode = data.showMode ?? _showMode
 
   const isTarget = data.targetColumnCardinalities !== undefined
-  const isSource = data.sourceColumnName !== undefined
+  const isSource = (data.sourceColumnNames?.length ?? 0) > 0
 
   // Only calculate diff-related values when showDiff is true
   const changeStatus = useMemo(() => {

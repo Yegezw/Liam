@@ -13,7 +13,7 @@ const aTableData = (
   isActiveHighlighted: false,
   isHighlighted: false,
   isTooltipVisible: false,
-  sourceColumnName: undefined,
+  sourceColumnNames: undefined,
   ...override,
 })
 

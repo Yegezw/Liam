@@ -23,7 +23,7 @@ export const TablePreview: FC<Props> = ({ tableName }) => {
               isActiveHighlighted: false,
               isHighlighted: false,
               isTooltipVisible: false,
-              sourceColumnName: undefined,
+              sourceColumnNames: undefined,
               targetColumnCardinalities: undefined,
               showMode: 'ALL_FIELDS',
             }}

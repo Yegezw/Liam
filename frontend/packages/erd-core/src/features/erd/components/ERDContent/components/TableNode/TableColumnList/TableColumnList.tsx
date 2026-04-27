@@ -39,7 +39,7 @@ export const TableColumnList: FC<TableColumnListProps> = ({ data, filter }) => {
           return null
         }
         const handleId = columnHandleId(data.table.name, column.name)
-        const isSource = data.sourceColumnName === column.name
+        const isSource = data.sourceColumnNames?.includes(column.name) ?? false
         const targetColumnCardinalities = data.targetColumnCardinalities
 
         return (

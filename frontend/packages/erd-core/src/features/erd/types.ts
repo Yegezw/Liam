@@ -7,7 +7,7 @@ export type TableNodeData = {
   isActiveHighlighted: boolean
   isHighlighted: boolean
   isTooltipVisible: boolean
-  sourceColumnName: string | undefined
+  sourceColumnNames: string[] | undefined
   targetColumnCardinalities?:
     | Record<string, Cardinality | undefined>
     | undefined
