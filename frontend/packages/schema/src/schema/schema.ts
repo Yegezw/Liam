@@ -32,6 +32,18 @@ const columnsSchema = v.record(columnNameSchema, columnSchema)
 export type Columns = v.InferOutput<typeof columnsSchema>
 export type Column = v.InferOutput<typeof columnSchema>
 
+const columnGroupNameSchema = v.string()
+
+export const columnGroupSchema = v.object({
+  name: columnGroupNameSchema,
+  columnNames: v.array(columnNameSchema),
+  comment: commentSchema,
+})
+export type ColumnGroup = v.InferOutput<typeof columnGroupSchema>
+
+const columnGroupsSchema = v.array(columnGroupSchema)
+export type ColumnGroups = v.InferOutput<typeof columnGroupsSchema>
+
 const indexNameSchema = v.string()
 
 const indexUniqueSchema = v.boolean()
@@ -120,6 +132,7 @@ export type Constraints = v.InferOutput<typeof constraintsSchema>
 export const tableSchema = v.object({
   name: tableNameSchema,
   columns: columnsSchema,
+  columnGroups: v.optional(columnGroupsSchema),
   comment: commentSchema,
   indexes: indexesSchema,
   constraints: constraintsSchema,

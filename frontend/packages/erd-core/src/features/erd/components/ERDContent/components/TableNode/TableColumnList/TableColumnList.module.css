@@ -1,0 +1,78 @@
+.list,
+.groupColumns {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.group {
+  position: relative;
+  list-style: none;
+  background: var(--node-background);
+}
+
+.group::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  height: 1px;
+  content: '';
+  background: var(--primary-accent);
+  box-shadow: 0 0 20px 0 rgba(29, 237, 131, 0.4);
+  pointer-events: none;
+}
+
+.group:last-child {
+  overflow: hidden;
+  border-bottom-right-radius: calc(var(--border-radius-md) - 1px);
+  border-bottom-left-radius: calc(var(--border-radius-md) - 1px);
+}
+
+.groupFieldset {
+  min-inline-size: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.groupHeader {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--spacing-2);
+  align-items: center;
+  width: 100%;
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-1);
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--overlay-70);
+  background: var(--global-muted-background);
+  border-bottom: 1px solid var(--node-border);
+}
+
+.groupColumns > li:last-child {
+  border-bottom-right-radius: var(--border-radius-none);
+  border-bottom-left-radius: var(--border-radius-none);
+}
+
+.group:last-child .groupColumns > li:last-child {
+  border-bottom-right-radius: calc(var(--border-radius-md) - 1px);
+  border-bottom-left-radius: calc(var(--border-radius-md) - 1px);
+}
+
+.groupColumnCount {
+  min-width: 2ch;
+  font-variant-numeric: tabular-nums;
+  color: var(--overlay-50);
+  text-align: right;
+}
+
+.groupName {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}

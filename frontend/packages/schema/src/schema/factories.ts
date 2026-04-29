@@ -1,6 +1,7 @@
 import type {
   CheckConstraint,
   Column,
+  ColumnGroup,
   Enum,
   Enums,
   Extension,
@@ -24,9 +25,19 @@ export const aColumn = (override?: Partial<Column>): Column => ({
   ...override,
 })
 
+export const aColumnGroup = (override?: Partial<ColumnGroup>): ColumnGroup => ({
+  name: 'Identity',
+  columnNames: ['id'],
+  comment: null,
+  ...override,
+})
+
 export const aTable = (override?: Partial<Table>): Table => ({
   name: 'users',
   comment: null,
+  ...(override?.columnGroups !== undefined
+    ? { columnGroups: override.columnGroups }
+    : {}),
   ...override,
   indexes: {
     ...override?.indexes,

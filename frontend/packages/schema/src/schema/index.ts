@@ -1,6 +1,7 @@
 export {
   aCheckConstraint,
   aColumn,
+  aColumnGroup,
   aForeignKeyConstraint,
   anEnum,
   anIndex,
@@ -13,6 +14,8 @@ export { mergeSchemas } from './mergeSchema.js'
 export type {
   CheckConstraint,
   Column,
+  ColumnGroup,
+  ColumnGroups,
   Columns,
   Constraint,
   Constraints,
@@ -31,6 +34,7 @@ export type {
   UniqueConstraint,
 } from './schema.js'
 export {
+  columnGroupSchema,
   columnSchema,
   constraintSchema,
   enumNameSchema,

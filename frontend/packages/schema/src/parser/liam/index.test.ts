@@ -89,6 +89,57 @@ describe('liam processor', () => {
     })
   })
 
+  it('should parse table column groups', async () => {
+    const input = JSON.stringify({
+      tables: {
+        users: {
+          name: 'users',
+          columns: {
+            id: {
+              name: 'id',
+              type: 'integer',
+              notNull: true,
+              default: null,
+              check: null,
+              comment: null,
+            },
+            email: {
+              name: 'email',
+              type: 'varchar(255)',
+              notNull: false,
+              default: null,
+              check: null,
+              comment: 'User email address',
+            },
+          },
+          columnGroups: [
+            {
+              name: 'Identity',
+              columnNames: ['id', 'email'],
+              comment: 'Columns used to identify a user',
+            },
+          ],
+          indexes: {},
+          constraints: {},
+          comment: 'Users table',
+        },
+      },
+      enums: {},
+      extensions: {},
+    })
+
+    const { value, errors } = await processor(input)
+
+    expect(errors).toEqual([])
+    expect(value.tables['users']?.columnGroups).toEqual([
+      {
+        name: 'Identity',
+        columnNames: ['id', 'email'],
+        comment: 'Columns used to identify a user',
+      },
+    ])
+  })
+
   it('should return error for invalid JSON', async () => {
     const input = 'invalid json{'
 

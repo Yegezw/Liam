@@ -42,6 +42,7 @@ export {
 export type { ProcessError } from './parser.js'
 export {
   aColumn,
+  aColumnGroup,
   aForeignKeyConstraint,
   anIndex,
   aPrimaryKeyConstraint,
@@ -50,9 +51,12 @@ export {
   aUniqueConstraint,
   type CheckConstraint,
   type Column,
+  type ColumnGroup,
+  type ColumnGroups,
   type Columns,
   type Constraint,
   type Constraints,
+  columnGroupSchema,
   columnSchema,
   type ForeignKeyConstraint,
   foreignKeyConstraintSchema,
