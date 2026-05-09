@@ -4,18 +4,22 @@ import { NON_RELATED_TABLE_GROUP_NODE_ID } from '../../../constants'
 type Params = {
   nodes: Node[]
   hiddenNodeIds: string[]
-  shouldHideGroupNodeId: boolean
 }
 
 export function updateNodesHiddenState({
   nodes,
   hiddenNodeIds,
-  shouldHideGroupNodeId,
 }: Params): Node[] {
+  const hiddenNodeIdSet = new Set(hiddenNodeIds)
+  const shouldHideNonRelatedTableGroupNode = nodes
+    .filter((node) => node.parentId === NON_RELATED_TABLE_GROUP_NODE_ID)
+    .every((node) => hiddenNodeIdSet.has(node.id))
+
   return nodes.map((node) => ({
     ...node,
     hidden:
-      hiddenNodeIds.includes(node.id) ||
-      (shouldHideGroupNodeId && node.id === NON_RELATED_TABLE_GROUP_NODE_ID),
+      hiddenNodeIdSet.has(node.id) ||
+      (shouldHideNonRelatedTableGroupNode &&
+        node.id === NON_RELATED_TABLE_GROUP_NODE_ID),
   }))
 }

@@ -3,7 +3,7 @@ import { useUserEditingOrThrow } from '../../../../../stores'
 import { useCustomReactflow } from '../../../../reactflow/hooks'
 import type { DisplayArea } from '../../../types'
 import { computeAutoLayout, highlightNodesAndEdges } from '../../../utils'
-import { hasNonRelatedChildNodes, updateNodesHiddenState } from '../utils'
+import { updateNodesHiddenState } from '../utils'
 import { usePopStateListener } from './usePopStateListener'
 
 type Params = {
@@ -27,7 +27,6 @@ export const useQueryParamsChanged = ({ displayArea }: Params) => {
     const updatedNodes = updateNodesHiddenState({
       nodes,
       hiddenNodeIds,
-      shouldHideGroupNodeId: !hasNonRelatedChildNodes(nodes),
     })
 
     const { nodes: highlightedNodes, edges: highlightedEdges } =

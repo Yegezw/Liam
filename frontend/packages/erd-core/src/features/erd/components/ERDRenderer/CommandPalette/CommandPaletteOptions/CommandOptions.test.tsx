@@ -1,3 +1,4 @@
+import { aSchema } from '@liam-hq/schema'
 import { ToastProvider } from '@liam-hq/ui'
 import { render, screen } from '@testing-library/react'
 import { type Node, ReactFlowProvider } from '@xyflow/react'
@@ -5,7 +6,7 @@ import { Command } from 'cmdk'
 import { NuqsTestingAdapter, type UrlUpdateEvent } from 'nuqs/adapters/testing'
 import type { FC, PropsWithChildren } from 'react'
 import { describe, expect, it, vi } from 'vitest'
-import { UserEditingProvider } from '../../../../../../stores'
+import { SchemaProvider, UserEditingProvider } from '../../../../../../stores'
 import { CommandPaletteProvider } from '../CommandPaletteProvider'
 import { CommandPaletteCommandOptions } from './CommandOptions'
 
@@ -14,15 +15,17 @@ const onUrlUpdate = vi.fn<() => [UrlUpdateEvent]>()
 
 const wrapper: FC<PropsWithChildren> = ({ children }) => (
   <NuqsTestingAdapter onUrlUpdate={onUrlUpdate}>
-    <UserEditingProvider>
-      <ReactFlowProvider defaultNodes={mockDefaultNodes()}>
-        <ToastProvider>
-          <CommandPaletteProvider>
-            <Command>{children}</Command>
-          </CommandPaletteProvider>
-        </ToastProvider>
-      </ReactFlowProvider>
-    </UserEditingProvider>
+    <SchemaProvider current={aSchema()}>
+      <UserEditingProvider>
+        <ReactFlowProvider defaultNodes={mockDefaultNodes()}>
+          <ToastProvider>
+            <CommandPaletteProvider>
+              <Command>{children}</Command>
+            </CommandPaletteProvider>
+          </ToastProvider>
+        </ReactFlowProvider>
+      </UserEditingProvider>
+    </SchemaProvider>
   </NuqsTestingAdapter>
 )
 
@@ -55,14 +58,14 @@ describe('show/hide all tables options', () => {
       {
         id: '1',
         type: 'table',
-        data: {},
+        data: { table: { name: '1' } },
         position: { x: 0, y: 0 },
         hidden: true,
       },
       {
         id: '2',
         type: 'table',
-        data: {},
+        data: { table: { name: '2' } },
         position: { x: 0, y: 0 },
         hidden: true,
       },
@@ -83,14 +86,14 @@ describe('show/hide all tables options', () => {
       {
         id: '1',
         type: 'table',
-        data: {},
+        data: { table: { name: '1' } },
         position: { x: 0, y: 0 },
         hidden: false,
       },
       {
         id: '2',
         type: 'table',
-        data: {},
+        data: { table: { name: '2' } },
         position: { x: 0, y: 0 },
         hidden: false,
       },
@@ -111,14 +114,14 @@ describe('show/hide all tables options', () => {
       {
         id: '1',
         type: 'table',
-        data: {},
+        data: { table: { name: '1' } },
         position: { x: 0, y: 0 },
         hidden: true,
       },
       {
         id: '2',
         type: 'table',
-        data: {},
+        data: { table: { name: '2' } },
         position: { x: 0, y: 0 },
         hidden: false,
       },

@@ -123,6 +123,7 @@ const mergeTables = (beforeTables: Tables, afterTables: Tables): Tables => {
 export function mergeSchemas(before: Schema, after: Schema): Schema {
   return {
     tables: mergeTables(before.tables, after.tables),
+    tableGroups: after.tableGroups ?? before.tableGroups,
     enums: { ...before.enums, ...after.enums },
     extensions: { ...before.extensions, ...after.extensions },
   }

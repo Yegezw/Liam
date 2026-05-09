@@ -47,6 +47,70 @@
   overflow-y: auto;
 }
 
+.visibilityGroupsSection {
+  display: grid;
+  gap: var(--spacing-1);
+  padding-bottom: var(--spacing-3);
+}
+
+.visibilityGroupsMenu {
+  display: grid;
+  gap: var(--spacing-1);
+}
+
+.visibilityGroupRow {
+  display: grid;
+}
+
+.visibilityGroupButton {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--spacing-2);
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: var(--spacing-2) var(--spacing-3);
+  color: inherit;
+  cursor: pointer;
+  background: var(--pane-background);
+  border: 1px solid var(--global-border);
+  border-radius: var(--border-radius-md);
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.visibilityGroupButton:hover {
+  background: var(--pane-background-active, #2e3031);
+  border-color: var(--overlay-40);
+}
+
+.visibilityGroupButtonActive {
+  background: var(--pane-background-active, #2e3031);
+  border-color: var(--overlay-70);
+}
+
+.visibilityGroupName {
+  min-width: 0;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-4);
+  font-weight: 600;
+}
+
+.visibilityGroupMeta {
+  flex-shrink: 0;
+  font-family: var(--code-font);
+  min-width: 2ch;
+  font-size: var(--font-size-2);
+  font-weight: 500;
+  text-align: right;
+  color: var(--overlay-40);
+}
+
 .contentControls {
   padding: var(--spacing-2) 0;
   border-block: 1px solid var(--global-border);

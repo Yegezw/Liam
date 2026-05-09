@@ -11,6 +11,7 @@ import type {
   PrimaryKeyConstraint,
   Schema,
   Table,
+  TableGroup,
   Tables,
   UniqueConstraint,
 } from './schema.js'
@@ -28,6 +29,13 @@ export const aColumn = (override?: Partial<Column>): Column => ({
 export const aColumnGroup = (override?: Partial<ColumnGroup>): ColumnGroup => ({
   name: 'Identity',
   columnNames: ['id'],
+  comment: null,
+  ...override,
+})
+
+export const aTableGroup = (override?: Partial<TableGroup>): TableGroup => ({
+  name: 'Core Tables',
+  tableNames: ['users'],
   comment: null,
   ...override,
 })
@@ -128,6 +136,9 @@ const extensions = (override?: Extensions): Extensions => {
 
 export const aSchema = (override?: Partial<Schema>): Schema => ({
   tables: tables(override?.tables),
+  ...(override?.tableGroups !== undefined
+    ? { tableGroups: override.tableGroups }
+    : {}),
   enums: enums(override?.enums),
   extensions: extensions(override?.extensions),
 })

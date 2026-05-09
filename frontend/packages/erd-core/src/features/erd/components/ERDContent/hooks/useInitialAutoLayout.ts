@@ -5,7 +5,7 @@ import { useCustomReactflow } from '../../../../reactflow/hooks'
 import type { DisplayArea } from '../../../types'
 import { computeAutoLayout, highlightNodesAndEdges } from '../../../utils'
 import { useErdContentContext } from '../ErdContentContext'
-import { hasNonRelatedChildNodes, updateNodesHiddenState } from '../utils'
+import { updateNodesHiddenState } from '../utils'
 
 type Params = {
   nodes: Node[]
@@ -40,7 +40,6 @@ export const useInitialAutoLayout = ({ nodes, displayArea }: Params) => {
           ? updateNodesHiddenState({
               nodes,
               hiddenNodeIds,
-              shouldHideGroupNodeId: !hasNonRelatedChildNodes(nodes),
             })
           : nodes
       const { nodes: highlightedNodes, edges: highlightedEdges } =

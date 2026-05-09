@@ -174,6 +174,38 @@ describe('mergeSchemas', () => {
 
       expect(result.tables).toHaveProperty('users')
     })
+
+    it('should preserve preset table groups from the after schema', () => {
+      const beforeSchema = createSchema({
+        tableGroups: [
+          {
+            name: 'Legacy Tables',
+            tableNames: ['legacy_table'],
+            comment: null,
+          },
+        ],
+      })
+
+      const afterSchema = createSchema({
+        tableGroups: [
+          {
+            name: 'Core Tables',
+            tableNames: ['users', 'orders'],
+            comment: 'Primary operational flow',
+          },
+        ],
+      })
+
+      const result = mergeSchemas(beforeSchema, afterSchema)
+
+      expect(result.tableGroups).toEqual([
+        {
+          name: 'Core Tables',
+          tableNames: ['users', 'orders'],
+          comment: 'Primary operational flow',
+        },
+      ])
+    })
   })
 
   describe('indexes merging', () => {

@@ -47,7 +47,6 @@ export const TableDetail: FC<Props> = ({ table }) => {
     const updatedNodes = updateNodesHiddenState({
       nodes: mainPaneNodes,
       hiddenNodeIds,
-      shouldHideGroupNodeId: true,
     })
 
     setHiddenNodeIds(hiddenNodeIds)

@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
 } from '@liam-hq/ui'
 import { useNodes } from '@xyflow/react'
+import clsx from 'clsx'
 import { useCallback, useMemo } from 'react'
 import { useVersionOrThrow } from '../../../../../providers'
 import { useUserEditingOrThrow } from '../../../../../stores'
@@ -92,7 +93,14 @@ export const LeftPane = () => {
   const allCount = tableNodes.length
   const visibleCount = tableNodes.filter((node) => !node.hidden).length
 
-  const { visibilityStatus, showAllNodes, hideAllNodes } = useTableVisibility()
+  const {
+    visibilityStatus,
+    tableGroups,
+    showAllNodes,
+    hideAllNodes,
+    applyVisibilityGroup,
+    isTableGroupActive,
+  } = useTableVisibility()
 
   const showSelectedTables = useCallback(() => {
     if (selectedNodeIds.size > 0) {
@@ -102,7 +110,6 @@ export const LeftPane = () => {
       const updatedNodes = updateNodesHiddenState({
         nodes,
         hiddenNodeIds,
-        shouldHideGroupNodeId: true,
       })
       setNodes(updatedNodes)
       setHiddenNodeIds(hiddenNodeIds)
@@ -148,6 +155,36 @@ export const LeftPane = () => {
             </span>
           </SidebarGroupLabel>
           <SidebarGroupContent>
+            {tableGroups.length > 0 ? (
+              <div className={styles.visibilityGroupsSection}>
+                <SidebarMenu className={styles.visibilityGroupsMenu}>
+                  {tableGroups.map((tableGroup) => (
+                    <SidebarMenuItem key={tableGroup.name}>
+                      <div className={styles.visibilityGroupRow}>
+                        <button
+                          type="button"
+                          aria-label={`${tableGroup.name} (${tableGroup.tableNames.length} tables)`}
+                          className={clsx(
+                            styles.visibilityGroupButton,
+                            isTableGroupActive(tableGroup) &&
+                              styles.visibilityGroupButtonActive,
+                          )}
+                          onClick={() => applyVisibilityGroup(tableGroup.name)}
+                        >
+                          <span className={styles.visibilityGroupName}>
+                            {tableGroup.name}
+                          </span>
+                          <span className={styles.visibilityGroupMeta}>
+                            {tableGroup.tableNames.length}
+                          </span>
+                        </button>
+                      </div>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </div>
+            ) : null}
+
             <SidebarMenu className={styles.tablesMenu}>
               {tableNodes.map((node) => (
                 <TableNameMenuButton

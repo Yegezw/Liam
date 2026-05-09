@@ -8,6 +8,7 @@ export {
   aPrimaryKeyConstraint,
   aSchema,
   aTable,
+  aTableGroup,
   aUniqueConstraint,
 } from './factories.js'
 export { mergeSchemas } from './mergeSchema.js'
@@ -30,6 +31,8 @@ export type {
   PrimaryKeyConstraint,
   Schema,
   Table,
+  TableGroup,
+  TableGroups,
   Tables,
   UniqueConstraint,
 } from './schema.js'
@@ -44,5 +47,6 @@ export {
   foreignKeyConstraintSchema,
   indexSchema,
   schemaSchema,
+  tableGroupSchema,
   tableSchema,
 } from './schema.js'

@@ -44,6 +44,18 @@ export type ColumnGroup = v.InferOutput<typeof columnGroupSchema>
 const columnGroupsSchema = v.array(columnGroupSchema)
 export type ColumnGroups = v.InferOutput<typeof columnGroupsSchema>
 
+const tableGroupNameSchema = v.string()
+
+export const tableGroupSchema = v.object({
+  name: tableGroupNameSchema,
+  tableNames: v.array(tableNameSchema),
+  comment: commentSchema,
+})
+export type TableGroup = v.InferOutput<typeof tableGroupSchema>
+
+const tableGroupsSchema = v.array(tableGroupSchema)
+export type TableGroups = v.InferOutput<typeof tableGroupsSchema>
+
 const indexNameSchema = v.string()
 
 const indexUniqueSchema = v.boolean()
@@ -170,6 +182,7 @@ export type Extensions = v.InferOutput<typeof extensionsSchema>
 // Schema definition for the entire database structure
 export const schemaSchema = v.object({
   tables: tablesSchema,
+  tableGroups: v.optional(tableGroupsSchema),
   enums: enumsSchema,
   extensions: extensionsSchema,
 })

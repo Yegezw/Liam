@@ -48,6 +48,7 @@ export {
   aPrimaryKeyConstraint,
   aSchema,
   aTable,
+  aTableGroup,
   aUniqueConstraint,
   type CheckConstraint,
   type Column,
@@ -67,7 +68,10 @@ export {
   type Schema,
   schemaSchema,
   type Table,
+  type TableGroup,
+  type TableGroups,
   type Tables,
+  tableGroupSchema,
   type UniqueConstraint,
 } from './schema/index.js'
 export {

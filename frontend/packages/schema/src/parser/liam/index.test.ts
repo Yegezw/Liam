@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { aColumn, anEnum, aSchema, aTable } from '../../schema/index.js'
+import {
+  aColumn,
+  anEnum,
+  aSchema,
+  aTable,
+  aTableGroup,
+} from '../../schema/index.js'
 import { processor } from './index.js'
 
 describe('liam processor', () => {
@@ -160,5 +166,36 @@ describe('liam processor', () => {
 
     expect(errors.length).toBeGreaterThan(0)
     expect(value).toEqual({ tables: {}, enums: {}, extensions: {} })
+  })
+
+  it('should parse preset table groups', async () => {
+    const input = JSON.stringify({
+      tables: {},
+      tableGroups: [
+        {
+          name: 'Core Tables',
+          tableNames: ['users', 'orders'],
+          comment: 'Primary operational flow',
+        },
+      ],
+      enums: {},
+      extensions: {},
+    })
+
+    const { value, errors } = await processor(input)
+
+    expect(errors).toEqual([])
+    expect(value).toEqual(
+      aSchema({
+        tables: {},
+        tableGroups: [
+          aTableGroup({
+            name: 'Core Tables',
+            tableNames: ['users', 'orders'],
+            comment: 'Primary operational flow',
+          }),
+        ],
+      }),
+    )
   })
 })
